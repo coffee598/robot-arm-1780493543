@@ -1,0 +1,12 @@
+{
+  "sessionId": "sess_8z6bkjtk",
+  "fullHistory": [
+    {
+      "role": "assistant",
+      "content": "Hey! I'm Roba Copilot — your co-pilot for the robot_arm. Here's what we can do together:\n\n🤖 Motion & Poses\n\"Wave hello with the end effector\"\n\"Pick up a virtual coffee cup\"\n\"Trace a circle in the air\"\n\n⚙️ Simulation & Physics\n\"See how gravity affects the arm's swing\"\n\"Test collision with a virtual obstacle\"\n\"Adjust joint stiffness to reduce wobble\"\n\n🛠️ Customise & Extend\n\"Add a suction cup gripper\"\n\"Change the arm length with a slider\"\n\"Attach a camera sensor to the wrist\""
+    }
+  ],
+  "compressionCount": 0,
+  "workspaceRoot": "/home/robacrh/roba/roba-laravel/repos/coffee598/robot-arm-1780493543",
+  "savedAt": 1780495171833
+}
