@@ -1,0 +1,6 @@
+{
+  "model": "serv/claude-sonnet-4.6",
+  "superAgentModel": "serv/claude-sonnet-4.6",
+  "projectRoot": "/home/robacrh/roba/roba-laravel/repos/coffee598/robot-arm-1780493543",
+  "superAgentEnabled": true
+}

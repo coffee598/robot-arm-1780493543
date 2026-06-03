@@ -1,0 +1,145 @@
+<mujoco model="realistic_robot_arm">
+
+  <compiler angle="radian" autolimits="true"/>
+
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4"/>
+
+  <visual>
+    <headlight diffuse="0.8 0.8 0.8" ambient="0.3 0.3 0.3" specular="0.2 0.2 0.2"/>
+    <global azimuth="150" elevation="-25"/>
+  </visual>
+
+  <asset>
+    <material name="metal_dark"   rgba="0.15 0.15 0.18 1"/>
+    <material name="metal_mid"    rgba="0.25 0.27 0.30 1"/>
+    <material name="joint_orange" rgba="0.95 0.45 0.05 1"/>
+    <material name="gripper_blue" rgba="0.10 0.45 0.85 1"/>
+    <material name="floor_mat"    rgba="0.30 0.30 0.32 1"/>
+    <material name="tcp_red"      rgba="0.90 0.10 0.10 1"/>
+  </asset>
+
+  <worldbody>
+
+    <!-- Floor -->
+    <geom name="floor" type="plane" size="2 2 0.05" pos="0 0 0" material="floor_mat" contype="1" conaffinity="1"/>
+
+    <!-- ── MOUNTING PLATE ── -->
+    <body name="mount_plate" pos="0 0 0">
+      <geom name="mount_geom" type="cylinder" size="0.12 0.015" pos="0 0 0.015" material="metal_dark"/>
+
+      <!-- ── J1 BASE PEDESTAL ── -->
+      <body name="base_pedestal" pos="0 0 0.03">
+        <geom name="base_lower" type="cylinder" size="0.10 0.04"  pos="0 0 0.04"  material="metal_dark"/>
+        <geom name="base_upper" type="cylinder" size="0.075 0.03" pos="0 0 0.11"  material="metal_mid"/>
+
+        <!-- ── J1: WAIST YAW ── -->
+        <body name="link1_waist" pos="0 0 0.14">
+          <joint name="j1_waist" type="hinge" axis="0 0 1" range="-3.14159 3.14159" damping="8" armature="0.05"/>
+          <!-- waist housing -->
+          <geom name="waist_hub"   type="cylinder" size="0.072 0.028" pos="0 0 0"     material="joint_orange"/>
+          <geom name="waist_neck"  type="cylinder" size="0.052 0.045" pos="0 0 0.055" material="metal_dark"/>
+
+          <!-- ── J2: SHOULDER PITCH ── -->
+          <body name="link2_shoulder" pos="0 0 0.10">
+            <joint name="j2_shoulder" type="hinge" axis="0 1 0" range="-1.5708 1.5708" damping="10" armature="0.08"/>
+            <!-- shoulder hub left/right flanges -->
+            <geom name="shoulder_hub_L" type="cylinder" size="0.060 0.022" pos=" 0.055 0 0" euler="0 1.5708 0" material="joint_orange"/>
+            <geom name="shoulder_hub_R" type="cylinder" size="0.060 0.022" pos="-0.055 0 0" euler="0 1.5708 0" material="joint_orange"/>
+            <!-- upper arm link — long rectangular link -->
+            <geom name="upper_arm_link" type="box"      size="0.038 0.032 0.145" pos="0 0 0.155" material="metal_dark"/>
+            <!-- cable channels on upper arm -->
+            <geom name="ua_rib_F" type="box" size="0.005 0.032 0.14" pos=" 0.042 0 0.155" material="metal_mid"/>
+            <geom name="ua_rib_B" type="box" size="0.005 0.032 0.14" pos="-0.042 0 0.155" material="metal_mid"/>
+
+            <!-- ── J3: ELBOW PITCH ── -->
+            <body name="link3_elbow" pos="0 0 0.30">
+              <joint name="j3_elbow" type="hinge" axis="0 1 0" range="-2.0944 0.2618" damping="8" armature="0.06"/>
+              <!-- elbow hub -->
+              <geom name="elbow_hub_L" type="cylinder" size="0.055 0.022" pos=" 0.050 0 0" euler="0 1.5708 0" material="joint_orange"/>
+              <geom name="elbow_hub_R" type="cylinder" size="0.055 0.022" pos="-0.050 0 0" euler="0 1.5708 0" material="joint_orange"/>
+              <!-- forearm link -->
+              <geom name="forearm_link"  type="box"    size="0.033 0.028 0.115" pos="0 0 0.130" material="metal_dark"/>
+              <geom name="fa_rib_F"      type="box"    size="0.005 0.028 0.110" pos=" 0.037 0 0.130" material="metal_mid"/>
+              <geom name="fa_rib_B"      type="box"    size="0.005 0.028 0.110" pos="-0.037 0 0.130" material="metal_mid"/>
+              <!-- elbow-to-wrist connector -->
+              <geom name="fa_connector"  type="cylinder" size="0.030 0.020" pos="0 0 0.255" material="metal_mid"/>
+
+              <!-- ── J4: FOREARM ROLL ── -->
+              <body name="link4_forearm_roll" pos="0 0 0.275">
+                <joint name="j4_roll" type="hinge" axis="0 0 1" range="-3.14159 3.14159" damping="5" armature="0.03"/>
+                <geom name="roll_hub"    type="cylinder" size="0.040 0.025" pos="0 0 0"     material="joint_orange"/>
+                <geom name="roll_barrel" type="cylinder" size="0.028 0.045" pos="0 0 0.068" material="metal_dark"/>
+
+                <!-- ── J5: WRIST PITCH ── -->
+                <body name="link5_wrist_pitch" pos="0 0 0.115">
+                  <joint name="j5_pitch" type="hinge" axis="0 1 0" range="-1.5708 1.5708" damping="4" armature="0.02"/>
+                  <geom name="wrist_hub_L" type="cylinder" size="0.035 0.018" pos=" 0.038 0 0" euler="0 1.5708 0" material="joint_orange"/>
+                  <geom name="wrist_hub_R" type="cylinder" size="0.035 0.018" pos="-0.038 0 0" euler="0 1.5708 0" material="joint_orange"/>
+                  <geom name="wrist_body"  type="box"      size="0.028 0.024 0.045" pos="0 0 0.052" material="metal_dark"/>
+
+                  <!-- ── J6: WRIST YAW (TOOL ROTATION) ── -->
+                  <body name="link6_wrist_yaw" pos="0 0 0.098">
+                    <joint name="j6_yaw" type="hinge" axis="0 0 1" range="-3.14159 3.14159" damping="3" armature="0.015"/>
+                    <geom name="tool_hub"    type="cylinder" size="0.030 0.018" pos="0 0 0"     material="joint_orange"/>
+                    <geom name="tool_neck"   type="cylinder" size="0.022 0.025" pos="0 0 0.040" material="metal_dark"/>
+                    <!-- flange plate -->
+                    <geom name="flange"      type="cylinder" size="0.038 0.007" pos="0 0 0.070" material="metal_mid"/>
+
+                    <!-- ── GRIPPER BASE ── -->
+                    <body name="gripper_base" pos="0 0 0.080">
+                      <geom name="grip_palm"   type="box"      size="0.030 0.022 0.028" pos="0 0 0.028" material="metal_dark"/>
+                      <geom name="grip_mount"  type="cylinder" size="0.018 0.010" pos="0 0 0.010" material="metal_mid"/>
+
+                      <!-- LEFT FINGER -->
+                      <body name="finger_left" pos=" 0.022 0 0.052">
+                        <joint name="j7_finger_L" type="slide" axis="1 0 0" range="0 0.030" damping="2"/>
+                        <geom name="fl_base"  type="box" size="0.008 0.010 0.030" pos="0 0 0.030" material="metal_mid"/>
+                        <geom name="fl_tip"   type="box" size="0.006 0.008 0.012" pos="0 0 0.068" material="gripper_blue"/>
+                      </body>
+
+                      <!-- RIGHT FINGER -->
+                      <body name="finger_right" pos="-0.022 0 0.052">
+                        <joint name="j7_finger_R" type="slide" axis="-1 0 0" range="0 0.030" damping="2"/>
+                        <geom name="fr_base"  type="box" size="0.008 0.010 0.030" pos="0 0 0.030" material="metal_mid"/>
+                        <geom name="fr_tip"   type="box" size="0.006 0.008 0.012" pos="0 0 0.068" material="gripper_blue"/>
+                      </body>
+
+                      <!-- TCP Site -->
+                      <site name="tcp" pos="0 0 0.120" size="0.008" rgba="0.9 0.1 0.1 1"/>
+
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+  </worldbody>
+
+  <!-- ════ ACTUATORS ════ -->
+  <actuator>
+    <motor name="act_j1_waist"    joint="j1_waist"    gear="200" ctrlrange="-3.14159 3.14159"/>
+    <motor name="act_j2_shoulder" joint="j2_shoulder" gear="180" ctrlrange="-1.5708 1.5708"/>
+    <motor name="act_j3_elbow"    joint="j3_elbow"    gear="150" ctrlrange="-2.0944 0.2618"/>
+    <motor name="act_j4_roll"     joint="j4_roll"     gear="80"  ctrlrange="-3.14159 3.14159"/>
+    <motor name="act_j5_pitch"    joint="j5_pitch"    gear="60"  ctrlrange="-1.5708 1.5708"/>
+    <motor name="act_j6_yaw"      joint="j6_yaw"      gear="50"  ctrlrange="-3.14159 3.14159"/>
+    <motor name="act_finger_L"    joint="j7_finger_L" gear="20"  ctrlrange="0 0.030"/>
+    <motor name="act_finger_R"    joint="j7_finger_R" gear="20"  ctrlrange="0 0.030"/>
+  </actuator>
+
+  <!-- ════ SENSORS ════ -->
+  <sensor>
+    <jointpos name="s_j1" joint="j1_waist"/>
+    <jointpos name="s_j2" joint="j2_shoulder"/>
+    <jointpos name="s_j3" joint="j3_elbow"/>
+    <jointpos name="s_j4" joint="j4_roll"/>
+    <jointpos name="s_j5" joint="j5_pitch"/>
+    <jointpos name="s_j6" joint="j6_yaw"/>
+    <framepos name="s_tcp" objtype="site" objname="tcp"/>
+  </sensor>
+
+</mujoco>
